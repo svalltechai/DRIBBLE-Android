@@ -1,5 +1,7 @@
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // API Base URL - uses the same backend as web app
 const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://appweb-sync.preview.emergentagent.com';
@@ -13,17 +15,31 @@ const api = axios.create({
   },
 });
 
-// Token management
+// Token storage - use AsyncStorage for web, SecureStore for native
+const TOKEN_KEY = 'auth_token';
+
 export const setAuthToken = async (token: string) => {
-  await SecureStore.setItemAsync('auth_token', token);
+  if (Platform.OS === 'web') {
+    await AsyncStorage.setItem(TOKEN_KEY, token);
+  } else {
+    await SecureStore.setItemAsync(TOKEN_KEY, token);
+  }
 };
 
 export const getAuthToken = async (): Promise<string | null> => {
-  return await SecureStore.getItemAsync('auth_token');
+  if (Platform.OS === 'web') {
+    return await AsyncStorage.getItem(TOKEN_KEY);
+  } else {
+    return await SecureStore.getItemAsync(TOKEN_KEY);
+  }
 };
 
 export const removeAuthToken = async () => {
-  await SecureStore.deleteItemAsync('auth_token');
+  if (Platform.OS === 'web') {
+    await AsyncStorage.removeItem(TOKEN_KEY);
+  } else {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+  }
 };
 
 // Request interceptor to add auth token
