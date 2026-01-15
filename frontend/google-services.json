@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "499832719572",
+    "project_id": "dribble-admin-abe91",
+    "storage_bucket": "dribble-admin-abe91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499832719572:android:639b2dea01dced6c149341",
+        "android_client_info": {
+          "package_name": "com.dribble.admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTQZaaR-0_hZ6xlxTS97rA4G4I1mrYNAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
