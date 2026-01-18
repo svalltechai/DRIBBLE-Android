@@ -215,14 +215,18 @@ frontend:
           comment: "Updated cancel handler to use new cancelOrder API. Added shipment tracking section. Added selected courier display. Added payment method and gateway display."
 
 metadata:
-  created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 1
+  created_by: "main_agent"
+  version: "2.0"
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "All backend API endpoints tested and verified"
+    - "Health Check API"
+    - "Authentication System"
+    - "Orders Management API"
+    - "Order Statistics API"
+    - "Cancel Order API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -230,3 +234,5 @@ test_plan:
 agent_communication:
     - agent: "testing"
       message: "Comprehensive backend API testing completed successfully. All 9 test cases passed including health check, authentication (login/me), orders management (list/filter/single/update), order statistics, and push token registration. Backend is fully functional and ready for production use. Sample data (5 orders) created automatically on startup for testing purposes."
+    - agent: "main"
+      message: "Backend synced with DRIBBLE-NEW-2026. Key changes: 1) Login now supports email/mobile, 2) Order status update changed from PATCH to PUT, 3) New cancel order endpoint added, 4) Order model updated with shipment, selected_courier, payment fields, 5) Sample data updated with new schema. Please test all backend endpoints, especially the new cancel order endpoint (POST /api/admin/orders/{order_id}/cancel) and the PUT status update endpoint."
