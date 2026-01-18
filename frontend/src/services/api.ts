@@ -81,7 +81,7 @@ export const authAPI = {
   },
 };
 
-// Orders API
+// Orders API - Synced with DRIBBLE-NEW-2026
 export const ordersAPI = {
   getOrders: async (params?: {
     status?: string;
@@ -98,8 +98,15 @@ export const ordersAPI = {
     return response.data;
   },
   
+  // Changed from PATCH to PUT to match new backend
   updateOrderStatus: async (orderId: string, status: string) => {
-    const response = await api.patch(`/admin/orders/${orderId}/status`, { status });
+    const response = await api.put(`/admin/orders/${orderId}/status`, { status });
+    return response.data;
+  },
+  
+  // New cancel order endpoint from DRIBBLE-NEW-2026
+  cancelOrder: async (orderId: string, reason?: string) => {
+    const response = await api.post(`/admin/orders/${orderId}/cancel`, { reason });
     return response.data;
   },
   
