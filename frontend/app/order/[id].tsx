@@ -265,6 +265,82 @@ export default function OrderDetailScreen() {
                 <Text style={styles.paymentLabel}>Payment ID</Text>
                 <Text style={styles.paymentValue}>{order.razorpay_payment_id}</Text>
               </View>
+              {order.payment_method && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Method</Text>
+                  <Text style={styles.paymentValue}>{order.payment_method}</Text>
+                </View>
+              )}
+              {order.payment_gateway && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Gateway</Text>
+                  <Text style={styles.paymentValue}>{order.payment_gateway}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        )}
+
+        {/* Shipment Tracking - New from DRIBBLE-NEW-2026 */}
+        {order.shipment && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Shipment</Text>
+            <View style={styles.card}>
+              {order.shipment.awb_number && (
+                <View style={styles.paymentRow}>
+                  <Text style={styles.paymentLabel}>AWB Number</Text>
+                  <Text style={[styles.paymentValue, { fontFamily: 'monospace' }]}>{order.shipment.awb_number}</Text>
+                </View>
+              )}
+              {order.shipment.carrier_name && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Carrier</Text>
+                  <Text style={styles.paymentValue}>{order.shipment.carrier_name} ({order.shipment.carrier_mode || 'Standard'})</Text>
+                </View>
+              )}
+              {order.shipment.estimated_days && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Est. Delivery</Text>
+                  <Text style={styles.paymentValue}>{order.shipment.estimated_days}</Text>
+                </View>
+              )}
+              {order.shipment.status && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Status</Text>
+                  <Text style={[styles.paymentValue, { textTransform: 'capitalize' }]}>{order.shipment.status}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        )}
+
+        {/* Selected Courier - New from DRIBBLE-NEW-2026 */}
+        {order.selected_courier && !order.shipment && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Selected Courier</Text>
+            <View style={styles.card}>
+              <View style={styles.paymentRow}>
+                <Text style={styles.paymentLabel}>Courier</Text>
+                <Text style={styles.paymentValue}>{order.selected_courier.full_name || order.selected_courier.name}</Text>
+              </View>
+              {order.selected_courier.mode && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Mode</Text>
+                  <Text style={styles.paymentValue}>{order.selected_courier.mode}</Text>
+                </View>
+              )}
+              {order.selected_courier.estimated_days && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Est. Delivery</Text>
+                  <Text style={styles.paymentValue}>{order.selected_courier.estimated_days}</Text>
+                </View>
+              )}
+              {order.selected_courier.rate > 0 && (
+                <View style={[styles.paymentRow, { marginTop: spacing.xs }]}>
+                  <Text style={styles.paymentLabel}>Shipping Rate</Text>
+                  <Text style={styles.paymentValue}>{formatCurrency(order.selected_courier.rate)}</Text>
+                </View>
+              )}
             </View>
           </View>
         )}
