@@ -217,7 +217,7 @@ class DribbleAPITester:
             return False
     
     def test_get_single_order(self):
-        """Test GET /api/orders/{order_id} endpoint"""
+        """Test GET /api/orders/{order_id} endpoint - verify new schema fields"""
         if not self.access_token:
             self.log_test("Get Single Order", False, "No access token available")
             return False
@@ -255,7 +255,11 @@ class DribbleAPITester:
                 data = response.json()
                 
                 if data.get("id") == order_id:
-                    self.log_test("Get Single Order", True, f"Retrieved order {order_id}", {"order_id": order_id})
+                    # Check for new schema fields
+                    new_fields = ["shipment", "selected_courier", "payment_method"]
+                    present_fields = [field for field in new_fields if field in data]
+                    
+                    self.log_test("Get Single Order", True, f"Retrieved order {order_id} with new fields: {present_fields}", {"order_id": order_id, "new_fields": present_fields})
                     return True
                 else:
                     self.log_test("Get Single Order", False, f"Order ID mismatch. Expected {order_id}, got {data.get('id')}", data)
