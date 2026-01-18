@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-DRIBBLE Admin API Backend Test Suite
-Tests all backend endpoints for the DRIBBLE admin system
+DRIBBLE Admin API Backend Test Suite - DRIBBLE-NEW-2026 Sync Testing
+Tests all backend endpoints synced with new web app backend
 """
 
 import requests
