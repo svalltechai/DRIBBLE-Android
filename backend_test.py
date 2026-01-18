@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Optional
 
 # Backend URL from environment
-BACKEND_URL = "https://appweb-sync.preview.emergentagent.com"
+BACKEND_URL = "https://dribble-order-sync.preview.emergentagent.com"
 API_BASE = f"{BACKEND_URL}/api"
 
 # Test credentials

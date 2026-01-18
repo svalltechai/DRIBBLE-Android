@@ -4,7 +4,7 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // API Base URL - uses the same backend as web app
-const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://appweb-sync.preview.emergentagent.com';
+const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://dribble-order-sync.preview.emergentagent.com';
 
 // Create axios instance
 const api = axios.create({
