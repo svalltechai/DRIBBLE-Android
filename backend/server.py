@@ -354,6 +354,32 @@ async def get_orders(
     
     return orders
 
+@api_router.get("/admin/orders/stats")
+async def get_order_stats(current_user: dict = Depends(get_current_user)):
+    """Get order statistics"""
+    total_orders = await db.orders.count_documents({})
+    pending_orders = await db.orders.count_documents({"status": {"$in": ["pending", "payment_pending"]}})
+    paid_orders = await db.orders.count_documents({"status": "paid"})
+    shipped_orders = await db.orders.count_documents({"status": "shipped"})
+    delivered_orders = await db.orders.count_documents({"status": "delivered"})
+    cancelled_orders = await db.orders.count_documents({"status": "cancelled"})
+    
+    # Today's orders
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    today_orders = await db.orders.count_documents({
+        "created_at": {"$gte": today_start.isoformat()}
+    })
+    
+    return {
+        "total_orders": total_orders,
+        "pending_orders": pending_orders,
+        "paid_orders": paid_orders,
+        "shipped_orders": shipped_orders,
+        "delivered_orders": delivered_orders,
+        "cancelled_orders": cancelled_orders,
+        "today_orders": today_orders
+    }
+
 @api_router.get("/admin/orders/{order_id}")
 async def get_admin_order(order_id: str, current_user: dict = Depends(get_current_user)):
     """Get single order by ID (admin endpoint)"""
