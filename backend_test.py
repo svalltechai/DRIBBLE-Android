@@ -495,11 +495,11 @@ class DribbleAPITester:
     
     def run_all_tests(self):
         """Run all API tests in sequence"""
-        print("🚀 Starting DRIBBLE Admin API Backend Tests")
+        print("🚀 Starting DRIBBLE Admin API Backend Tests - DRIBBLE-NEW-2026 Sync")
         print(f"📡 Backend URL: {BACKEND_URL}")
         print("=" * 60)
         
-        # Test sequence
+        # Test sequence matching review request priorities
         tests = [
             ("Health Check", self.test_health_check),
             ("Admin Login", self.test_admin_login),
@@ -507,7 +507,8 @@ class DribbleAPITester:
             ("Get Orders", self.test_get_orders),
             ("Get Orders (Status Filter)", self.test_get_orders_with_status_filter),
             ("Get Single Order", self.test_get_single_order),
-            ("Update Order Status", self.test_update_order_status),
+            ("Update Order Status PUT", self.test_update_order_status_put),
+            ("Cancel Order", self.test_cancel_order),
             ("Get Order Stats", self.test_get_order_stats),
             ("Register Push Token", self.test_register_push_token),
         ]
@@ -533,7 +534,7 @@ class DribbleAPITester:
         print(f"📊 Test Summary: {passed} passed, {failed} failed")
         
         if failed == 0:
-            print("🎉 All tests passed!")
+            print("🎉 All tests passed! DRIBBLE-NEW-2026 sync successful!")
             return True
         else:
             print(f"⚠️  {failed} test(s) failed")
