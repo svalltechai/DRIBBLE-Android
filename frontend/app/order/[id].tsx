@@ -95,9 +95,10 @@ export default function OrderDetailScreen() {
           onPress: async () => {
             try {
               setIsUpdating(true);
-              await ordersAPI.updateOrderStatus(id as string, 'cancelled');
+              // Use the new cancel order endpoint (synced with DRIBBLE-NEW-2026)
+              await ordersAPI.cancelOrder(id as string, 'Cancelled by admin from mobile app');
               await fetchOrder();
-              Alert.alert('Order Cancelled', 'The order has been cancelled.');
+              Alert.alert('Order Cancelled', 'The order has been cancelled successfully.');
             } catch (error: any) {
               console.error('Error cancelling order:', error);
               Alert.alert('Error', error.response?.data?.detail || 'Failed to cancel order');
