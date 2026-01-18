@@ -5,9 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "dribbleadmin",
-    "userInterfaceStyle": "dark",
-    "newArchEnabled": true,
+    "scheme": "dribble-admin",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/images/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a1a2e"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.dribble.admin"
@@ -15,15 +20,9 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#0F172A"
+        "backgroundColor": "#1a1a2e"
       },
-      "edgeToEdgeEnabled": true,
-      "package": "com.dribble.admin",
-      "googleServicesFile": "./google-services.json",
-      "permissions": [
-        "android.permission.RECEIVE_BOOT_COMPLETED",
-        "android.permission.VIBRATE"
-      ]
+      "package": "com.dribble.admin"
     },
     "web": {
       "bundler": "metro",
@@ -32,30 +31,14 @@
     },
     "plugins": [
       "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#0F172A"
-        }
-      ],
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/images/notification-icon.png",
-          "color": "#3B82F6",
-          "sounds": []
-        }
-      ]
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
     },
     "extra": {
-      "eas": {
-        "projectId": "dribble-admin-abe91"
+      "router": {
+        "origin": false
       }
     }
   }
