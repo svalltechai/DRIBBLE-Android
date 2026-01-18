@@ -339,8 +339,82 @@ class DribbleAPITester:
             self.log_test("Update Order Status PUT", False, f"Request failed: {str(e)}")
             return False
     
+    def test_cancel_order(self):
+        """Test POST /api/admin/orders/{order_id}/cancel endpoint - NEW endpoint from DRIBBLE-NEW-2026"""
+        if not self.access_token:
+            self.log_test("Cancel Order", False, "No access token available")
+            return False
+        
+        # First get orders to find an order to cancel
+        try:
+            orders_response = requests.get(
+                f"{API_BASE}/admin/orders",
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if orders_response.status_code != 200:
+                self.log_test("Cancel Order", False, "Could not fetch orders to get order ID")
+                return False
+                
+            orders = orders_response.json()
+            if not orders or len(orders) == 0:
+                self.log_test("Cancel Order", False, "No orders available to test with")
+                return False
+                
+            # Find an order that can be cancelled (not already cancelled or delivered)
+            test_order = None
+            for order in orders:
+                if order.get("status") not in ["cancelled", "delivered"]:
+                    test_order = order
+                    break
+            
+            if not test_order:
+                self.log_test("Cancel Order", False, "No suitable order found to cancel")
+                return False
+                
+            order_id = test_order.get("id")
+            order_number = test_order.get("order_number", "N/A")
+            old_status = test_order.get("status")
+            
+            if not order_id:
+                self.log_test("Cancel Order", False, "Order ID not found")
+                return False
+            
+            # Cancel the order with reason
+            cancel_data = {"reason": "Test cancellation"}
+            
+            response = requests.post(
+                f"{API_BASE}/admin/orders/{order_id}/cancel",
+                json=cancel_data,
+                headers=self.headers,
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                
+                if data.get("success") and "order" in data:
+                    cancelled_order = data["order"]
+                    if cancelled_order.get("status") == "cancelled":
+                        self.log_test("Cancel Order", True, f"Order {order_number} cancelled successfully (was {old_status})", {"order_id": order_id, "order_number": order_number, "old_status": old_status})
+                        return True
+                    else:
+                        self.log_test("Cancel Order", False, f"Order status not updated to cancelled: {cancelled_order.get('status')}", data)
+                        return False
+                else:
+                    self.log_test("Cancel Order", False, "Invalid response format - missing success or order", data)
+                    return False
+            else:
+                self.log_test("Cancel Order", False, f"HTTP {response.status_code}: {response.text}")
+                return False
+                
+        except Exception as e:
+            self.log_test("Cancel Order", False, f"Request failed: {str(e)}")
+            return False
+    
     def test_get_order_stats(self):
-        """Test GET /api/admin/orders/stats endpoint"""
+        """Test GET /api/admin/orders/stats endpoint - should include new fields"""
         if not self.access_token:
             self.log_test("Get Order Stats", False, "No access token available")
             return False
@@ -355,13 +429,21 @@ class DribbleAPITester:
             if response.status_code == 200:
                 data = response.json()
                 
+                # Check for both old and new required fields
                 required_fields = ["total_orders", "pending_orders", "today_orders"]
-                if all(field in data for field in required_fields):
-                    self.log_test("Get Order Stats", True, "Order statistics retrieved successfully", data)
+                new_fields = ["paid_orders", "shipped_orders", "delivered_orders", "cancelled_orders"]
+                
+                missing_required = [field for field in required_fields if field not in data]
+                missing_new = [field for field in new_fields if field not in data]
+                
+                if not missing_required and not missing_new:
+                    self.log_test("Get Order Stats", True, f"Order statistics retrieved with all new fields: {new_fields}", data)
                     return True
+                elif not missing_required:
+                    self.log_test("Get Order Stats", False, f"Missing new fields: {missing_new}", data)
+                    return False
                 else:
-                    missing_fields = [field for field in required_fields if field not in data]
-                    self.log_test("Get Order Stats", False, f"Missing required fields: {missing_fields}", data)
+                    self.log_test("Get Order Stats", False, f"Missing required fields: {missing_required}", data)
                     return False
             else:
                 self.log_test("Get Order Stats", False, f"HTTP {response.status_code}: {response.text}")
