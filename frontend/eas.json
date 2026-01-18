@@ -1,12 +1,17 @@
 {
   "cli": {
-    "version": ">= 3.0.0"
+    "version": ">= 3.0.0",
+    "appVersionSource": "local"
   },
   "build": {
     "preview": {
+      "distribution": "internal",
       "android": {
         "buildType": "apk",
-        "distribution": "internal"
+        "gradleCommand": ":app:assembleRelease"
+      },
+      "env": {
+        "EAS_SKIP_AUTO_FINGERPRINT": "1"
       }
     },
     "production": {
@@ -14,5 +19,8 @@
         "buildType": "app-bundle"
       }
     }
+  },
+  "submit": {
+    "production": {}
   }
 }
