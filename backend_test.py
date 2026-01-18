@@ -272,10 +272,10 @@ class DribbleAPITester:
             self.log_test("Get Single Order", False, f"Request failed: {str(e)}")
             return False
     
-    def test_update_order_status(self):
-        """Test PATCH /api/admin/orders/{order_id}/status endpoint"""
+    def test_update_order_status_put(self):
+        """Test PUT /api/admin/orders/{order_id}/status endpoint - NEW endpoint (changed from PATCH to PUT)"""
         if not self.access_token:
-            self.log_test("Update Order Status", False, "No access token available")
+            self.log_test("Update Order Status PUT", False, "No access token available")
             return False
         
         # First get orders to find an order ID
@@ -287,12 +287,12 @@ class DribbleAPITester:
             )
             
             if orders_response.status_code != 200:
-                self.log_test("Update Order Status", False, "Could not fetch orders to get order ID")
+                self.log_test("Update Order Status PUT", False, "Could not fetch orders to get order ID")
                 return False
                 
             orders = orders_response.json()
             if not orders or len(orders) == 0:
-                self.log_test("Update Order Status", False, "No orders available to test with")
+                self.log_test("Update Order Status PUT", False, "No orders available to test with")
                 return False
                 
             # Find an order that's not already confirmed
@@ -307,14 +307,15 @@ class DribbleAPITester:
                 test_order = orders[0]
                 
             order_id = test_order.get("id")
+            old_status = test_order.get("status")
             if not order_id:
-                self.log_test("Update Order Status", False, "Order ID not found")
+                self.log_test("Update Order Status PUT", False, "Order ID not found")
                 return False
             
-            # Update order status to confirmed
+            # Update order status to confirmed using PUT
             update_data = {"status": "confirmed"}
             
-            response = requests.patch(
+            response = requests.put(
                 f"{API_BASE}/admin/orders/{order_id}/status",
                 json=update_data,
                 headers=self.headers,
@@ -325,17 +326,17 @@ class DribbleAPITester:
                 data = response.json()
                 
                 if data.get("status") == "confirmed":
-                    self.log_test("Update Order Status", True, f"Updated order {order_id} status to confirmed", {"order_id": order_id, "new_status": "confirmed"})
+                    self.log_test("Update Order Status PUT", True, f"Updated order {order_id} status from {old_status} to confirmed using PUT", {"order_id": order_id, "old_status": old_status, "new_status": "confirmed"})
                     return True
                 else:
-                    self.log_test("Update Order Status", False, f"Status not updated. Expected 'confirmed', got '{data.get('status')}'", data)
+                    self.log_test("Update Order Status PUT", False, f"Status not updated. Expected 'confirmed', got '{data.get('status')}'", data)
                     return False
             else:
-                self.log_test("Update Order Status", False, f"HTTP {response.status_code}: {response.text}")
+                self.log_test("Update Order Status PUT", False, f"HTTP {response.status_code}: {response.text}")
                 return False
                 
         except Exception as e:
-            self.log_test("Update Order Status", False, f"Request failed: {str(e)}")
+            self.log_test("Update Order Status PUT", False, f"Request failed: {str(e)}")
             return False
     
     def test_get_order_stats(self):
