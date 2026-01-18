@@ -3,8 +3,8 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// API Base URL - uses the same backend as web app
-const API_BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL || 'https://dribble-order-sync.preview.emergentagent.com';
+// API Base URL - DRIBBLE Production Backend
+const API_BASE_URL = 'https://dribble-sports.com';
 
 // Create axios instance
 const api = axios.create({
