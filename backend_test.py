@@ -108,7 +108,7 @@ class DribbleAPITester:
             return False
     
     def test_get_current_user(self):
-        """Test GET /api/auth/me endpoint"""
+        """Test GET /api/auth/me endpoint - should return user info with name field"""
         if not self.access_token:
             self.log_test("Get Current User", False, "No access token available")
             return False
@@ -123,9 +123,12 @@ class DribbleAPITester:
             if response.status_code == 200:
                 data = response.json()
                 
-                if data.get("email") == ADMIN_EMAIL and data.get("role") == "admin":
-                    self.log_test("Get Current User", True, "User info retrieved successfully", data)
+                if data.get("email") == ADMIN_EMAIL and data.get("role") == "admin" and "name" in data:
+                    self.log_test("Get Current User", True, f"User info retrieved with name: {data.get('name')}", data)
                     return True
+                elif "name" not in data:
+                    self.log_test("Get Current User", False, "User info missing required 'name' field", data)
+                    return False
                 else:
                     self.log_test("Get Current User", False, "Invalid user info returned", data)
                     return False
