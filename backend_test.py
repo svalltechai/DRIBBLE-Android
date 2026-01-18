@@ -41,15 +41,18 @@ class DribbleAPITester:
             print(f"   Response: {json.dumps(response_data, indent=2)}")
     
     def test_health_check(self):
-        """Test GET /api/health endpoint"""
+        """Test GET /api/health endpoint - should return version 2.0.0"""
         try:
             response = requests.get(f"{API_BASE}/health", timeout=10)
             
             if response.status_code == 200:
                 data = response.json()
-                if data.get("status") == "healthy":
-                    self.log_test("Health Check", True, "API is healthy", data)
+                if data.get("status") == "healthy" and data.get("version") == "2.0.0":
+                    self.log_test("Health Check", True, f"API is healthy, version {data.get('version')}", data)
                     return True
+                elif data.get("status") == "healthy":
+                    self.log_test("Health Check", False, f"Wrong version: {data.get('version')}, expected 2.0.0", data)
+                    return False
                 else:
                     self.log_test("Health Check", False, f"Unexpected health status: {data.get('status')}", data)
                     return False
