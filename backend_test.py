@@ -179,7 +179,7 @@ class DribbleAPITester:
             return False
     
     def test_get_orders_with_status_filter(self):
-        """Test GET /api/admin/orders?status=pending endpoint"""
+        """Test GET /api/admin/orders?status=pending endpoint - should include both pending and payment_pending"""
         if not self.access_token:
             self.log_test("Get Orders (Status Filter)", False, "No access token available")
             return False
@@ -195,14 +195,15 @@ class DribbleAPITester:
                 data = response.json()
                 
                 if isinstance(data, list):
-                    # Check if all orders have pending status
-                    pending_orders = [order for order in data if order.get("status") == "pending"]
+                    # Check if filtering works - should include both "pending" and "payment_pending"
+                    valid_statuses = ["pending", "payment_pending"]
+                    invalid_orders = [order for order in data if order.get("status") not in valid_statuses]
                     
-                    if len(pending_orders) == len(data):
-                        self.log_test("Get Orders (Status Filter)", True, f"Retrieved {len(data)} pending orders", {"pending_count": len(data)})
+                    if len(invalid_orders) == 0:
+                        self.log_test("Get Orders (Status Filter)", True, f"Status filtering working correctly, found {len(data)} pending orders", {"pending_count": len(data)})
                         return True
                     else:
-                        self.log_test("Get Orders (Status Filter)", False, f"Filter not working properly. Expected all pending, got mixed statuses")
+                        self.log_test("Get Orders (Status Filter)", False, f"Filter not working properly. Found {len(invalid_orders)} orders with invalid status")
                         return False
                 else:
                     self.log_test("Get Orders (Status Filter)", False, "Response is not a list", data)
