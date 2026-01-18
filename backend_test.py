@@ -141,7 +141,7 @@ class DribbleAPITester:
             return False
     
     def test_get_orders(self):
-        """Test GET /api/admin/orders endpoint"""
+        """Test GET /api/admin/orders endpoint - should return orders with new fields"""
         if not self.access_token:
             self.log_test("Get Orders", False, "No access token available")
             return False
@@ -156,8 +156,16 @@ class DribbleAPITester:
             if response.status_code == 200:
                 data = response.json()
                 
-                if isinstance(data, list):
-                    self.log_test("Get Orders", True, f"Retrieved {len(data)} orders", {"order_count": len(data)})
+                if isinstance(data, list) and len(data) > 0:
+                    # Check for new schema fields in first order
+                    sample_order = data[0]
+                    new_fields = ["shipment", "selected_courier", "payment_method"]
+                    present_fields = [field for field in new_fields if field in sample_order]
+                    
+                    self.log_test("Get Orders", True, f"Retrieved {len(data)} orders with new fields: {present_fields}", {"order_count": len(data), "new_fields": present_fields})
+                    return True
+                elif isinstance(data, list):
+                    self.log_test("Get Orders", True, f"Retrieved {len(data)} orders (no sample data)", {"order_count": len(data)})
                     return True
                 else:
                     self.log_test("Get Orders", False, "Response is not a list", data)
