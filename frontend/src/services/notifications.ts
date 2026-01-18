@@ -9,13 +9,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
   }),
 });
-
-// Firebase project config
-const FIREBASE_SENDER_ID = '499832719572';
 
 export async function registerForPushNotificationsAsync(): Promise<string | null> {
   let token = null;
@@ -42,10 +37,8 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
   }
 
   try {
-    // Get Expo push token (works with FCM on Android)
-    const pushTokenData = await Notifications.getExpoPushTokenAsync({
-      projectId: 'dribble-admin-abe91', // Firebase project ID
-    });
+    // Get Expo push token
+    const pushTokenData = await Notifications.getExpoPushTokenAsync();
     token = pushTokenData.data;
     console.log('Push token:', token);
   } catch (error) {
@@ -59,14 +52,6 @@ export async function registerForPushNotificationsAsync(): Promise<string | null
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#3B82F6',
-      sound: 'default',
-    });
-
-    await Notifications.setNotificationChannelAsync('payments', {
-      name: 'Payment Notifications',
-      importance: Notifications.AndroidImportance.HIGH,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#10B981',
       sound: 'default',
     });
   }
