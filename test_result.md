@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "Test the DRIBBLE Admin API backend with comprehensive endpoint testing including health check, authentication, orders management, and push token functionality"
+user_problem_statement: "Sync DRIBBLE Admin Android App with new web app backend (DRIBBLE-NEW-2026). Update mock backend and frontend to match new API structure."
 
 backend:
   - task: "Health Check API"
@@ -111,11 +111,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
           comment: "✅ GET /api/health endpoint working correctly. Returns healthy status with service info."
+        - working: "NA"
+          agent: "main"
+          comment: "Backend updated to v2.0.0, synced with DRIBBLE-NEW-2026. Needs retesting."
 
   - task: "Authentication System"
     implemented: true
@@ -123,11 +126,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
-          comment: "✅ POST /api/auth/login and GET /api/auth/me endpoints working correctly. Admin login with admin@dribble.com/Admin123! successful, JWT token generation and validation working."
+          comment: "✅ POST /api/auth/login and GET /api/auth/me endpoints working correctly."
+        - working: "NA"
+          agent: "main"
+          comment: "Updated login to support both email and mobile. Added is_active account check. Synced with DRIBBLE-NEW-2026."
 
   - task: "Orders Management API"
     implemented: true
@@ -135,11 +141,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
-          comment: "✅ All orders endpoints working: GET /api/admin/orders (retrieved 5 orders), GET /api/admin/orders?status=pending (filtering works), GET /api/orders/{order_id} (single order retrieval), PATCH /api/admin/orders/{order_id}/status (status update to confirmed successful)."
+          comment: "✅ All orders endpoints working."
+        - working: "NA"
+          agent: "main"
+          comment: "Changed status update from PATCH to PUT (kept PATCH for backward compat). Added new cancel order endpoint POST /admin/orders/{id}/cancel. Updated order model with shipment, selected_courier, payment_method fields. Synced with DRIBBLE-NEW-2026."
 
   - task: "Order Statistics API"
     implemented: true
@@ -147,11 +156,14 @@ backend:
     file: "/app/backend/server.py"
     stuck_count: 0
     priority: "medium"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
         - working: true
           agent: "testing"
-          comment: "✅ GET /api/admin/orders/stats endpoint working correctly. Returns total_orders, pending_orders, and today_orders statistics."
+          comment: "✅ GET /api/admin/orders/stats endpoint working correctly."
+        - working: "NA"
+          agent: "main"
+          comment: "Added more stats fields: paid_orders, shipped_orders, delivered_orders, cancelled_orders. Synced with DRIBBLE-NEW-2026."
 
   - task: "Push Token Management"
     implemented: true
@@ -163,20 +175,44 @@ backend:
     status_history:
         - working: true
           agent: "testing"
-          comment: "✅ POST /api/admin/push-tokens endpoint working correctly. Successfully registers push tokens with device info."
+          comment: "✅ POST /api/admin/push-tokens endpoint working correctly."
+
+  - task: "Cancel Order API"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/server.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "NEW: Added POST /api/admin/orders/{order_id}/cancel endpoint with reason parameter. Synced with DRIBBLE-NEW-2026."
 
 frontend:
-  - task: "Frontend Testing"
-    implemented: false
+  - task: "Frontend API Service Update"
+    implemented: true
     working: "NA"
-    file: "N/A"
+    file: "/app/frontend/src/services/api.ts"
     stuck_count: 0
-    priority: "low"
+    priority: "high"
     needs_retesting: false
     status_history:
         - working: "NA"
-          agent: "testing"
-          comment: "Frontend testing not performed as per testing agent limitations and instructions."
+          agent: "main"
+          comment: "Changed updateOrderStatus from PATCH to PUT. Added new cancelOrder API method."
+
+  - task: "Order Detail Screen Update"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/app/order/[id].tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: "NA"
+          agent: "main"
+          comment: "Updated cancel handler to use new cancelOrder API. Added shipment tracking section. Added selected courier display. Added payment method and gateway display."
 
 metadata:
   created_by: "testing_agent"
